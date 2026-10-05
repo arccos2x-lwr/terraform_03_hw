@@ -2,6 +2,7 @@
 resource "yandex_compute_instance" "web" {
   count = 2
   name  = "web-${count.index + 1}" # count.index начинается с 0, поэтому +1
+  hostname = "web-${count.index + 1}"
   depends_on = [yandex_compute_instance.db]
 
   resources {

@@ -9,6 +9,7 @@ resource "yandex_compute_disk" "extra" {
 # Машина storage с динамическим подключением дисков
 resource "yandex_compute_instance" "storage" {
   name = "storage"
+  hostname = "storage"
 
   resources {
     cores  = 2
