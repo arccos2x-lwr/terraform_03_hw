@@ -3,18 +3,19 @@ resource "yandex_compute_instance" "web" {
   count = 2
   name  = "web-${count.index + 1}" # count.index начинается с 0, поэтому +1
   hostname = "web-${count.index + 1}"
+  platform_id = var.vm_storage_platform_id
   depends_on = [yandex_compute_instance.db]
 
   resources {
-    cores  = 2
-    memory = 1
-    core_fraction = 20
+    cores         = var.vm_web_cores
+    memory        = var.vm_web_memory
+    core_fraction = var.vm_web_core_fraction
   }
 
   boot_disk {
     initialize_params {
-      image_id = "fd827b91d99psvq5fjit" # Ubuntu 22.04 LTS (актуальный ID можно получить командой yc compute image list --folder-id standard-images)
-      size     = 10
+      image_id = var.vm_web_image_id
+      size     = var.vm_web_disk_size
     }
   }
 
@@ -24,12 +25,11 @@ resource "yandex_compute_instance" "web" {
     nat                = true
   }
 
+  scheduling_policy {
+    preemptible = var.vm_preemptible
+  }
+
   metadata = {
     ssh-keys = "ubuntu:${local.ssh_key}"
   }
-}
-
-# Локальная переменная для чтения публичного ключа SSH
-locals {
-  ssh_key = file("~/.ssh/id_ed25519.pub")
 }

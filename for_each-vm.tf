@@ -17,6 +17,7 @@ resource "yandex_compute_instance" "db" {
 
   name = each.value.vm_name
   hostname = each.value.vm_name
+  platform_id = var.vm_platform_id
 
   resources {
     cores  = each.value.cpu
@@ -25,7 +26,7 @@ resource "yandex_compute_instance" "db" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd827b91d99psvq5fjit"
+      image_id = var.vm_db_image_id
       size     = each.value.disk_volume
     }
   }
@@ -34,6 +35,10 @@ resource "yandex_compute_instance" "db" {
     subnet_id          = yandex_vpc_subnet.develop.id
     security_group_ids = [yandex_vpc_security_group.example.id]
     nat                = true
+  }
+
+  scheduling_policy {
+    preemptible = var.vm_preemptible
   }
 
   metadata = {

@@ -12,14 +12,14 @@ resource "yandex_compute_instance" "storage" {
   hostname = "storage"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores  = var.vm_storage_cores
+    memory = var.vm_storage_memory
   }
 
   boot_disk {
     initialize_params {
-      image_id = "fd827b91d99psvq5fjit"
-      size     = 10
+      image_id = var.vm_storage_image_id
+      size     = var.vm_storage_disk_size
     }
   }
 
@@ -34,6 +34,10 @@ resource "yandex_compute_instance" "storage" {
     subnet_id          = yandex_vpc_subnet.develop.id
     security_group_ids = [yandex_vpc_security_group.example.id]
     nat                = true
+  }
+
+  scheduling_policy {
+    preemptible = var.vm_preemptible
   }
 
   metadata = {
